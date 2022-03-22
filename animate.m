@@ -1,4 +1,5 @@
 function animate(r_a,theta_a,t,R0)
+    figure
     theta_b=theta_a+pi;
     x_a = r_a.*cos(theta_a);
     y_a = r_a.*sin(theta_a);
@@ -19,7 +20,7 @@ function animate(r_a,theta_a,t,R0)
     h = animatedline("LineStyle","-.");
     f = animatedline("LineStyle",":");
 
-    axis([-5,5,-5,5])
+    axis([-15,15,-15,15])
     axis equal
 
 

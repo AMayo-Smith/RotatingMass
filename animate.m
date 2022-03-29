@@ -55,6 +55,7 @@ function animate(r_a,theta_a,t,R0)
         hold off
         drawnow
     end
+    set(stop,'style','pushbutton','string','close','callback','close(gcf)');
     hold off
 
 

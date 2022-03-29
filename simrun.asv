@@ -15,7 +15,7 @@ b=R_0;
 a=a_b*b;        %20 km
 alt=500; %orbital altitude, km
 T=orbPeriod(alt); %orbital period, seconds
-rate_pre=50*2*pi/T;
+rate_pre=*pi/T;
 
 %Configure Integrator
 tstepMax=1;

@@ -20,7 +20,7 @@ function animate(r_a,theta_a,t,R0)
     h = animatedline("LineStyle","-.");
     f = animatedline("LineStyle",":");
 
-    axis([-15,15,-15,15])
+    axis([-25,25,-25,25])
     axis equal
 
 

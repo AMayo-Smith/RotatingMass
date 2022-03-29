@@ -26,28 +26,29 @@ b=R_0;
 a=a_b*b;        %20 km
 alt=500; %orbital altitude, km
 T=orbPeriod(alt); %orbital period, seconds
-rate_pre=2*pi/T;
+rate_pre=50*2*pi/T;
 
 %Initial Conditions
 x0=0;           %Initial displacement from neutral spring, km
 xdot0=0;        %km/s
 theta0=0;       %rad
-thetadot0=40;   %rad/s
+thetadot0=50*2*pi/T;   %rad/s
 
 %system properties
 m=100; %kg
 damping=0;
 
 
-
-irun=5;
+%% Loop Setup
+irun=4;
 runs=irun^4;
 dataMatrix=[];
-kvals=linspace(1800,1900,irun);
-PIDvals=linspace(50,1000,irun);
+kvals=linspace(1,100,irun);
+PIDvals=linspace(1,500,irun);
 powermatrix=zeros(irun,irun);
 errormatrix=zeros(irun,irun);
 
+%% Loop
 for ik=1:irun
     k=kvals(ik);
     k_m=k/m;
@@ -75,7 +76,8 @@ for ik=1:irun
     
     
         power=abs(a_control.*rdot);
-        avrgpower=1/max(t)*trapz(t,power);
+       % avrgpower=1/max(t)*trapz(t,power);
+        avrgpower=mean(power);
         %plot(power)
         err_ratio=err./desired;
         [errmax, errmean]=error_ss(t, err_ratio);
@@ -86,7 +88,7 @@ for ik=1:irun
         errormatrix(ic,ik)=errmean;
     end
 end
-
+%% Results
 heatmap(kvals,PIDvals,powermatrix);
 xlabel('k Values');
 ylabel('PID Values');

@@ -15,11 +15,11 @@ b=R_0;
 a=a_b*b;        %20 km
 alt=500; %orbital altitude, km
 T=orbPeriod(alt); %orbital period, seconds
-rate_pre=*pi/T;
+rate_pre=2*pi/T;
 
 %Configure Integrator
 tstepMax=1;
-tfinal=T;
+tfinal=T/50;
 
 
 %Initial Conditions
@@ -101,3 +101,4 @@ errmean=mean(abs(lateErr))
 trajectoryplot(r,theta,t);
 trajectoryplot(desired,theta,t);
 title('desired');
+

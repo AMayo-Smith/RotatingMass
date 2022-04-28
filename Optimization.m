@@ -5,62 +5,66 @@ close all
 
 %% User Inputs
 
-% Configure Gain
-% k=1500; %N/km
-% gainP=0;
-% gainI=0;
-% gainD=0;
-
-%% Given Inputs
-
-%Configure Integrator
-tstepMax=5e-3;
-tfinal=90;
-
-
-
 %Geometry
 a_b=10;         %shoot for a/b = 10
-R_0=2;          %Undeformed Length, km
+R_0=2e3;          %Undeformed Length, m
 b=R_0;
-a=a_b*b;        %20 km
+b=90; %Energy Check Value
+a=a_b*b;        %20e3 m
+a=300; %Energy Check Value
 alt=500; %orbital altitude, km
 T=orbPeriod(alt); %orbital period, seconds
-rate_pre=50*2*pi/T;
+rate_pre=2*pi/T;
+rate_pre=0; %Energy Check Value
+
+%Configure Integrator
+tfinal=T/4; %seconds
+
+tStepMin=tfinal*10^(-6);
+tstepMax=tfinal*10^(-2);
+
+
 
 %Initial Conditions
 x0=0;           %Initial displacement from neutral spring, km
-xdot0=0;        %km/s
+xdot0=0;        %m/s
 theta0=0;       %rad
-thetadot0=50*2*pi/T;   %rad/s
-
+thetadot0=200*rate_pre;   %rad/s
+thetadot0=0.012301296218008;
 %system properties
 m=100; %kg
 damping=0;
 
 
 %% Loop Setup
-irun=4;
-runs=irun^4;
+krun=1;
+crun=1;
 dataMatrix=[];
-kvals=linspace(1,100,irun);
-PIDvals=linspace(1,500,irun);
-powermatrix=zeros(irun,irun);
-errormatrix=zeros(irun,irun);
+kvals=linspace(1,10,krun);
+PIDvals=linspace(0.5,2,crun);
+powermatrix=zeros(crun,krun);
+errormatrix=zeros(crun,krun);
 
 %% Loop
-for ik=1:irun
-    k=kvals(ik);
-    k_m=k/m;
-    for ic=1:irun
+tic
+% for ik=1:krun
+%     k=kvals(ik);
+%     k_m=k/m;
+k=0;
+k_m=k/m;
+
+    for ic=1:crun
         disp(ic)
-        gainP=PIDvals(ic);
-        gainI=PIDvals(ic);
-        gainD=PIDvals(ic);
+%         gainP=PIDvals(ic);
+%         gainI=PIDvals(ic);
+%         gainD=PIDvals(ic);
+        gainP=10;
+        gainI=10;
+        gainD=10;
         results=sim('controltest.slx');
        
         
-        %theta=results.theta;
+        theta=results.theta;
         thetadot=results.thetadot;
         %thetaddot=results.thetaddot;
         
@@ -84,14 +88,15 @@ for ik=1:irun
         if errmean >= 0.05
             avrgpower=NaN;
         end
-        powermatrix(ic,ik)=avrgpower;
-        errormatrix(ic,ik)=errmean;
+%         powermatrix(ic,ik)=avrgpower;
+%         errormatrix(ic,ik)=errmean;
     end
-end
+% end
+toc
 %% Results
-heatmap(kvals,PIDvals,powermatrix);
-xlabel('k Values');
-ylabel('PID Values');
+% heatmap(kvals,PIDvals,powermatrix);
+% xlabel('k Values');
+% ylabel('PID Values');
 
 % heatmap(kvals,PIDvals,errormatrix);
 % xlabel('k Values');
@@ -155,4 +160,16 @@ ylabel('PID Values');
 % plot(lateErr);
 %animate(r,theta,t,R_0);
  %tileplot(r,rdot,theta,thetadot,t);
-% trajectoryplot(r,theta,t);
+ trajectoryplot(r,theta,t);
+
+ %% Peck Spreadsheet Confirmation
+angmomentum=m.*r.*thetadot;
+tension=m.*thetadot.^2.*r;
+power=rdot.*tension;
+figure
+plot(theta,angmomentum)
+title('angular momentum')
+figure
+plot(theta,power)
+title('power')
+
